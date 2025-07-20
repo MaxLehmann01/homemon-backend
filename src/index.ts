@@ -3,6 +3,7 @@ import ConfigSchema from 'src/config/Schema';
 import Logger from 'src/components/logger/Logger';
 import Database from 'src/components/Database';
 import Server from 'src/components/server/Server';
+import Scheduler from 'src/components/Scheduler';
 
 Config.loadSchema(ConfigSchema);
 
@@ -31,3 +32,12 @@ server
     .catch((error) => {
         logger.error('Failed to start the server', { error });
     });
+
+const scheduler = Scheduler.getInstance(logger);
+scheduler.addTask(
+    'example-task',
+    '* * * * * *', // Every hour
+    () => {
+        logger.info('Example task executed');
+    }
+);
