@@ -10,5 +10,18 @@ export type TPlugMeasurement = {
     current: number;
     tempC: number;
     tempF: number;
-    isOn: boolean;
+    createdAt: Date;
+};
+
+export type TPlugSummary = {
+    createdAt: Date;
+    startAt: Date;
+    endAt: Date;
+    countMeasurements: number;
+    powerSum: number;
+    powerAvg: number;
+    voltageAvg: number;
+    currentAvg: number;
+    tempCAvg: number;
+    tempFAvg: number;
 };
