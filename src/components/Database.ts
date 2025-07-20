@@ -1,5 +1,5 @@
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
-import { LoggerInterface } from 'src/components/LoggerInterface';
+import { LoggerInterface } from 'src/components/logger/LoggerInterface';
 import { DatabaseConfig } from 'src/config/Types';
 
 export default class Database {

@@ -1,6 +1,6 @@
 import Config from 'src/config/Config';
 import ConfigSchema from 'src/config/Schema';
-import Logger from 'src/components/Logger';
+import Logger from 'src/components/logger/Logger';
 import Database from 'src/components/Database';
 
 Config.loadSchema(ConfigSchema);

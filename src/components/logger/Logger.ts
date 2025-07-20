@@ -2,7 +2,7 @@ import { LoggerConfig } from 'src/config/Types';
 import winston from 'winston';
 import path from 'path';
 import 'winston-daily-rotate-file';
-import { LoggerInterface } from 'src/components/LoggerInterface';
+import { LoggerInterface } from 'src/components/logger/LoggerInterface';
 
 export default class Logger implements LoggerInterface {
     private logger: winston.Logger;

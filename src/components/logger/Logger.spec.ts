@@ -1,5 +1,5 @@
 import { LoggerConfig } from 'src/config/Types';
-import Logger from 'src/components/Logger';
+import Logger from 'src/components/logger/Logger';
 import winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import path from 'path';
