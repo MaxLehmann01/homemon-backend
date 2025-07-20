@@ -1,4 +1,4 @@
-import { ConfigSchema } from 'src/config/Types';
+import { ConfigSchema, LoggerConfig } from 'src/config/Types';
 
 export default class Config {
     private static values: Record<string, string | number | boolean> = {};
@@ -50,5 +50,12 @@ export default class Config {
         }
 
         return value as T;
+    }
+
+    public static getLoggerConfig(): LoggerConfig {
+        return {
+            level: Config.get<string>('LOG_LEVEL'),
+            dir: Config.get<string>('LOG_DIR'),
+        };
     }
 }

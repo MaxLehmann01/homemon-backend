@@ -4,4 +4,9 @@ type ConfigSchema = {
     [key: string]: ConfigField;
 };
 
-export { ConfigField, ConfigSchema };
+type LoggerConfig = {
+    level: string;
+    dir: string;
+};
+
+export { ConfigField, ConfigSchema, LoggerConfig };

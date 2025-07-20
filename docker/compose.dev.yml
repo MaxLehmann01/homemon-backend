@@ -8,5 +8,6 @@ services:
     restart: unless-stopped
     volumes:
       - ../src:/app/src
+      - ../logs:/app/logs
     environment:
       TZ: "Europe/Berlin"
