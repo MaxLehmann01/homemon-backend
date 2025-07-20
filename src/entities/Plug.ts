@@ -3,12 +3,12 @@ import { TPlug } from 'src/models/Plug';
 export default class Plug {
     private id: TPlug['id'];
     private name: TPlug['name'];
-    private ip: TPlug['ip'];
+    private url: TPlug['url'];
 
-    constructor(id: TPlug['id'], name: TPlug['name'], ip: TPlug['ip']) {
+    constructor(id: TPlug['id'], name: TPlug['name'], url: TPlug['url']) {
         this.id = id;
         this.name = name;
-        this.ip = ip;
+        this.url = url;
     }
 
     public getId(): TPlug['id'] {
@@ -19,7 +19,7 @@ export default class Plug {
         return this.name;
     }
 
-    public getIp(): TPlug['ip'] {
-        return this.ip;
+    public getUrl(): TPlug['url'] {
+        return this.url;
     }
 }

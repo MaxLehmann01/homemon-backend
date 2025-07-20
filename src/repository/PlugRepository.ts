@@ -10,12 +10,13 @@ export default class PlugRepository {
     }
 
     public async findAll(): Promise<Plug[]> {
-        const result = await this.database.select<TPlug>('plugs', ['id', 'name', 'ip']);
+        const result = await this.database.select<TPlug>('plugs', ['id', 'name', 'url']);
 
         if (!result) {
             return [];
         }
 
-        return result.map((item) => new Plug(item.id, item.name, item.ip));
+        return result.map((item) => new Plug(item.id, item.name, item.url));
+    }
     }
 }
