@@ -1,0 +1,33 @@
+{
+    "name": "homemon-backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "docker-compose -f ./docker/compose.dev.yml up --build"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MaxLehmann01/homemon-backend.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/MaxLehmann01/homemon-backend/issues"
+    },
+    "homepage": "https://github.com/MaxLehmann01/homemon-backend#readme",
+    "devDependencies": {
+        "@eslint/js": "^9.31.0",
+        "eslint": "^9.31.0",
+        "globals": "^16.3.0",
+        "ts-node": "^10.9.2",
+        "tsconfig-paths": "^4.2.0",
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.37.0"
+    },
+    "dependencies": {
+        "nodemon": "^3.1.10"
+    }
+}

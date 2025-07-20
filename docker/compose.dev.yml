@@ -1,0 +1,12 @@
+name: homemon-backend-dev
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile.dev
+    restart: unless-stopped
+    volumes:
+      - ../src:/app/src
+    environment:
+      TZ: "Europe/Berlin"

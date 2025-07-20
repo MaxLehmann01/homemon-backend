@@ -1,0 +1,22 @@
+{
+    "ts-node": {
+        "files": true
+    },
+    "files": ["src/index.ts"],
+    "compilerOptions": {
+        "target": "es2024",
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "paths": {
+            "src/*": ["./src/*"]
+        },
+        "rootDir": "src",
+        "outDir": "dist",
+        "removeComments": true,
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "baseUrl": "src"
+    }
+}
