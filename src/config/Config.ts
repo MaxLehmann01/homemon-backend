@@ -38,6 +38,11 @@ export default class Config {
                     Config.values[key] = lowerValue === 'true';
                     break;
                 }
+                default: {
+                    throw new Error(
+                        `Unsupported type for environment variable: ${key} - expected one of string, number, boolean`
+                    );
+                }
             }
         }
     }
