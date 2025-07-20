@@ -10,13 +10,14 @@
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "paths": {
-            "src/*": ["./src/*"]
+            "src/*": ["src/*"]
         },
         "rootDir": "src",
         "outDir": "dist",
         "removeComments": true,
         "strictNullChecks": true,
         "noImplicitAny": true,
-        "baseUrl": "src"
-    }
+        "baseUrl": "."
+    },
+    "include": ["src"]
 }
