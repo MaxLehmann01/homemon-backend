@@ -5,6 +5,7 @@ import Database from 'src/components/Database';
 import Server from 'src/components/server/Server';
 import Scheduler from 'src/components/Scheduler';
 import PlugRepository from 'src/repository/PlugRepository';
+import FetchPlugMeasurementTask from './tasks/FetchPlugMeasurement';
 
 Config.loadSchema(ConfigSchema);
 
@@ -37,11 +38,6 @@ server
     });
 
 const scheduler = Scheduler.getInstance(logger);
-
-(async () => {
-    try {
-        console.log(await plugRepository.findAll());
-    } catch (err) {
-        logger.error('An error occurred during initialization', { error: err });
-    }
-})();
+scheduler.addTask('fetch-plug-measurement', '* * * * * *', () =>
+    new FetchPlugMeasurementTask(logger, plugRepository).run()
+);
