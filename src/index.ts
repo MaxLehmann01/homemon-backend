@@ -4,6 +4,7 @@ import Logger from 'src/components/logger/Logger';
 import Database from 'src/components/Database';
 import Server from 'src/components/server/Server';
 import Scheduler from 'src/components/Scheduler';
+import PlugRepository from 'src/repository/PlugRepository';
 
 Config.loadSchema(ConfigSchema);
 
@@ -14,6 +15,8 @@ Server.setConfig(Config.getServerConfig());
 
 const database = Database.getInstance(logger);
 const server = Server.getInstance(logger);
+
+const plugRepository = new PlugRepository(database);
 
 database
     .start()
@@ -34,10 +37,11 @@ server
     });
 
 const scheduler = Scheduler.getInstance(logger);
-scheduler.addTask(
-    'example-task',
-    '* * * * * *', // Every hour
-    () => {
-        logger.info('Example task executed');
+
+(async () => {
+    try {
+        console.log(await plugRepository.findAll());
+    } catch (err) {
+        logger.error('An error occurred during initialization', { error: err });
     }
-);
+})();
