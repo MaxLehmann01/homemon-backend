@@ -11,4 +11,5 @@ export default {
     DB_NAME: 'string',
     DB_SSL: 'boolean',
     DB_SCHEMA: 'string',
+    CORS_WHITELIST: 'string',
 } as ConfigSchema;

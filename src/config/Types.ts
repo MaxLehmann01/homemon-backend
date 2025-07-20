@@ -1,3 +1,5 @@
+import { CorsOptions } from 'cors';
+
 type ConfigField = 'string' | 'number' | 'boolean';
 
 type ConfigSchema = {
@@ -19,4 +21,9 @@ type DatabaseConfig = {
     schema: string;
 };
 
-export { ConfigField, ConfigSchema, LoggerConfig, DatabaseConfig };
+type ServerConfig = {
+    port: number;
+    corsOptions: CorsOptions;
+};
+
+export { ConfigField, ConfigSchema, LoggerConfig, DatabaseConfig, ServerConfig };
