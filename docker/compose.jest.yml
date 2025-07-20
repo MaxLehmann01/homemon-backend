@@ -1,0 +1,13 @@
+name: homemon-backend-jest
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile.jest
+    restart: no
+    volumes:
+      - ../src:/app/src
+      - ../coverage:/app/coverage
+    environment:
+      TZ: "Europe/Berlin"

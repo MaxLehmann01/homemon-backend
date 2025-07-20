@@ -4,7 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev": "docker-compose -f ./docker/compose.dev.yml -f ./docker/compose.dev.override.yml up --build"
+        "dev": "docker-compose -f ./docker/compose.dev.yml -f ./docker/compose.dev.override.yml up --build",
+        "test": "docker-compose -f ./docker/compose.jest.yml up --build --abort-on-container-exit && docker compose -f ./docker/compose.jest.yml down"
     },
     "repository": {
         "type": "git",
@@ -20,8 +21,11 @@
     "homepage": "https://github.com/MaxLehmann01/homemon-backend#readme",
     "devDependencies": {
         "@eslint/js": "^9.31.0",
+        "@types/jest": "^30.0.0",
         "eslint": "^9.31.0",
         "globals": "^16.3.0",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.4.0",
         "ts-node": "^10.9.2",
         "tsconfig-paths": "^4.2.0",
         "typescript": "^5.8.3",
