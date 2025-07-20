@@ -1,4 +1,5 @@
 node_modules
 coverage
+logs
 docker/*override*
 !docker/compose.dev.override.example.yml
