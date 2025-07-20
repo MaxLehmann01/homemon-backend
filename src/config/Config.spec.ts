@@ -108,4 +108,37 @@ describe('Config', () => {
             });
         });
     });
+
+    describe('getDatabaseConfig', () => {
+        it('should return the database configuration', () => {
+            process.env.DB_HOST = 'localhost';
+            process.env.DB_PORT = '5432';
+            process.env.DB_USER = 'user';
+            process.env.DB_PASSWORD = 'password';
+            process.env.DB_NAME = 'database';
+            process.env.DB_SSL = 'false';
+            process.env.DB_SCHEMA = 'public';
+
+            const schema: ConfigSchema = {
+                DB_HOST: 'string',
+                DB_PORT: 'number',
+                DB_USER: 'string',
+                DB_PASSWORD: 'string',
+                DB_NAME: 'string',
+                DB_SSL: 'boolean',
+                DB_SCHEMA: 'string',
+            };
+
+            expect(() => Config.loadSchema(schema)).not.toThrow();
+            expect(Config.getDatabaseConfig()).toEqual({
+                host: 'localhost',
+                port: 5432,
+                user: 'user',
+                password: 'password',
+                database: 'database',
+                ssl: false,
+                schema: 'public',
+            });
+        });
+    });
 });

@@ -9,4 +9,14 @@ type LoggerConfig = {
     dir: string;
 };
 
-export { ConfigField, ConfigSchema, LoggerConfig };
+type DatabaseConfig = {
+    host: string;
+    port: number;
+    user: string;
+    password: string;
+    database: string;
+    ssl: boolean;
+    schema: string;
+};
+
+export { ConfigField, ConfigSchema, LoggerConfig, DatabaseConfig };

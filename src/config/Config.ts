@@ -1,4 +1,4 @@
-import { ConfigSchema, LoggerConfig } from 'src/config/Types';
+import { ConfigSchema, DatabaseConfig, LoggerConfig } from 'src/config/Types';
 
 export default class Config {
     private static values: Record<string, string | number | boolean> = {};
@@ -61,6 +61,18 @@ export default class Config {
         return {
             level: Config.get<string>('LOG_LEVEL'),
             dir: Config.get<string>('LOG_DIR'),
+        };
+    }
+
+    public static getDatabaseConfig(): DatabaseConfig {
+        return {
+            host: Config.get<string>('DB_HOST'),
+            port: Config.get<number>('DB_PORT'),
+            user: Config.get<string>('DB_USER'),
+            password: Config.get<string>('DB_PASSWORD'),
+            database: Config.get<string>('DB_NAME'),
+            ssl: Config.get<boolean>('DB_SSL'),
+            schema: Config.get<string>('DB_SCHEMA'),
         };
     }
 }
