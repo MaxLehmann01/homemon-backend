@@ -1,15 +1,15 @@
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
+import { LoggerInterface } from 'src/components/LoggerInterface';
 import { DatabaseConfig } from 'src/config/Types';
-import Logger from 'src/components/Logger';
 
 export default class Database {
     private static instance: Database;
     private static config: DatabaseConfig;
 
     private pool: Pool;
-    private logger: Logger;
+    private logger: LoggerInterface;
 
-    private constructor(logger: Logger) {
+    private constructor(logger: LoggerInterface) {
         this.logger = logger;
         this.pool = new Pool(Database.config);
 
@@ -22,7 +22,7 @@ export default class Database {
         Database.config = config;
     }
 
-    public static getInstance(logger: Logger): Database {
+    public static getInstance(logger: LoggerInterface): Database {
         if (!Database.instance) {
             Database.instance = new Database(logger);
         }

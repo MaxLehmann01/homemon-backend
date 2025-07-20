@@ -2,8 +2,9 @@ import { LoggerConfig } from 'src/config/Types';
 import winston from 'winston';
 import path from 'path';
 import 'winston-daily-rotate-file';
+import { LoggerInterface } from 'src/components/LoggerInterface';
 
-export default class Logger {
+export default class Logger implements LoggerInterface {
     private logger: winston.Logger;
 
     constructor(config: LoggerConfig) {
