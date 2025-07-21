@@ -25,3 +25,9 @@ export type TPlugSummary = {
     tempCAvg: number;
     tempFAvg: number;
 };
+
+export type TPlugReport = {
+    createdAt: Date;
+    reportDate: Date;
+    summaries: TPlugSummary[];
+};

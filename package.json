@@ -4,7 +4,9 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "dev": "docker-compose -f ./docker/compose.dev.yml -f ./docker/compose.dev.override.yml up --build",
+        "dev:start": "docker-compose -f ./docker/compose.dev.yml -f ./docker/compose.dev.override.yml up --build",
+        "dev:down": "docker-compose -f ./docker/compose.dev.yml -f ./docker/compose.dev.override.yml down",
+        "dev:down-v": "docker-compose -f ./docker/compose.dev.yml -f ./docker/compose.dev.override.yml down -v",
         "test": "docker-compose -f ./docker/compose.jest.yml up --build --abort-on-container-exit && docker compose -f ./docker/compose.jest.yml down"
     },
     "repository": {

@@ -7,6 +7,7 @@ import Scheduler from 'src/components/Scheduler';
 import PlugRepository from 'src/repository/PlugRepository';
 import FetchPlugMeasurementTask from './tasks/FetchPlugMeasurement';
 import CreatePlugSummaryTask from './tasks/CreatePlugSummary';
+import CreatePlugReportTask from './tasks/CreatePlugReports';
 
 Config.loadSchema(ConfigSchema);
 
@@ -42,8 +43,10 @@ const scheduler = Scheduler.getInstance(logger);
 scheduler.addTask('fetch-plug-measurement', '* * * * * *', () =>
     new FetchPlugMeasurementTask(logger, plugRepository).run()
 );
-scheduler.addTask('create-plug-summary', '* * * * *', () => new CreatePlugSummaryTask(logger, plugRepository).run());
+scheduler.addTask('create-plug-summary', '0 * * * * *', () => new CreatePlugSummaryTask(logger, plugRepository).run());
+scheduler.addTask('create-plug-report', '0 0 * * * *', () => new CreatePlugReportTask(logger, plugRepository).run());
 
 (async () => {
-    await new CreatePlugSummaryTask(logger, plugRepository).run();
+    // new CreatePlugReportTask(logger, plugRepository).run();
+    // await new CreatePlugSummaryTask(logger, plugRepository).run();
 })();

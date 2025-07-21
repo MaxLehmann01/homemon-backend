@@ -81,11 +81,12 @@ export default class Database {
         table: string,
         columns: string[],
         where?: string,
+        orderBy?: string,
         params: Array<string | number | boolean | Date | null> = []
     ): Promise<T[]> {
         const query = `SELECT ${columns.map((column) => `"${column}"`).join(', ')} FROM "${table}" ${
             where ? `WHERE ${where}` : ''
-        }`;
+        } ${orderBy ? `ORDER BY ${orderBy}` : ''}`;
 
         const result = await this.query<T>(query, params);
         return result.rows;

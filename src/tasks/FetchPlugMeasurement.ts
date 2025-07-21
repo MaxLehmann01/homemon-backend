@@ -23,7 +23,7 @@ export default class FetchPlugMeasurementTask extends AbstractTask implements Ta
             await this.plugRepository.createMeasurement(plug.getId(), measurement);
 
             if (measurement) {
-                // this.logger.silly(`Fetched measurement for plug ${plug.getName()}:`, measurement);
+                this.logger.silly(`Fetched measurement for plug ${plug.getName()}:`, measurement);
             } else {
                 this.logger.warn(`Failed to fetch measurement for plug ${plug.getName()}`);
             }

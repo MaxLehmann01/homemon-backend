@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import Database from 'src/components/Database';
 import Plug from 'src/entities/Plug';
-import { TPlug, TPlugMeasurement } from 'src/models/Plug';
+import { TPlug, TPlugMeasurement, TPlugReport, TPlugSummary } from 'src/models/Plug';
 
 export default class PlugRepository {
     private database: Database;
@@ -60,6 +60,7 @@ export default class PlugRepository {
             'measurements',
             ['created_at', 'power', 'voltage', 'current', 'temp_c', 'temp_f'],
             'plug_id = $1 AND created_at BETWEEN $2 AND $3',
+            'created_at ASC',
             [plugId, from, to]
         );
 
@@ -78,10 +79,14 @@ export default class PlugRepository {
     }
 
     public async createMeasurement(plugId: TPlug['id'], measurement: TPlugMeasurement): Promise<boolean> {
+        const now = new Date(measurement.createdAt);
+        now.setMilliseconds(0);
+
         const result = await this.database.insert(
             'measurements',
             {
                 plug_id: plugId,
+                created_at: now,
                 power: measurement.power,
                 voltage: measurement.voltage,
                 current: measurement.current,
@@ -94,70 +99,94 @@ export default class PlugRepository {
         return !!result;
     }
 
-    // public async fetchMeasurement(plug: Plug): Promise<Measurement | null> {
-    //     try {
-    //         const requestConfig: AxiosRequestConfig = {
-    //             method: 'GET',
-    //             url: `${plug.getUrl()}/rpc/Switch.GetStatus?id=0`,
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //         };
+    public async deleteMeasurementsByPlugId(plugId: TPlug['id'], from: Date, to: Date): Promise<boolean> {
+        const result = await this.database.delete('measurements', 'plug_id = $1 AND created_at BETWEEN $2 AND $3', [
+            plugId,
+            from,
+            to,
+        ]);
 
-    //         const response = await axios(requestConfig);
-    //         const data = response.data as {
-    //             output: boolean;
-    //             apower: number;
-    //             voltage: number;
-    //             current: number;
-    //             temperature: {
-    //                 tC: number;
-    //                 tF: number;
-    //             };
-    //         };
+        return !!result;
+    }
 
-    //         return new Measurement(
-    //             plug.getId(),
-    //             data.apower,
-    //             data.voltage,
-    //             data.current,
-    //             data.temperature.tC,
-    //             data.temperature.tF,
-    //             data.output,
-    //             new Date()
-    //         );
+    public async getSummariesByPlugId(plugId: TPlug['id'], from: Date, to: Date): Promise<TPlugSummary[]> {
+        const result = await this.database.select(
+            'summaries',
+            [
+                'created_at',
+                'start_at',
+                'end_at',
+                'count_measurements',
+                'power_sum',
+                'power_avg',
+                'voltage_avg',
+                'current_avg',
+                'temp_c_avg',
+                'temp_f_avg',
+            ],
+            'plug_id = $1 AND start_at >= $2 AND end_at <= $3',
+            'start_at ASC',
+            [plugId, from, to]
+        );
 
-    //         // return {
-    //         //     power: data.apower,
-    //         //     voltage: data.voltage,
-    //         //     current: data.current,
-    //         //     tempC: data.temperature.tC,
-    //         //     tempF: data.temperature.tF,
-    //         //     isOn: data.output,
-    //         // };
-    //     } catch (_) {
-    //         return null;
-    //     }
-    // }
+        if (!result) {
+            return [];
+        }
 
-    // public async createMeasurement(plugId: TPlug['id'], measurement: TPlugMeasurement): Promise<boolean> {
-    //     const result = await this.database.insert(
-    //         'measurements',
-    //         {
-    //             plug_id: plugId,
-    //             power: measurement.power,
-    //             voltage: measurement.voltage,
-    //             current: measurement.current,
-    //             temp_c: measurement.tempC,
-    //             temp_f: measurement.tempF,
-    //         },
-    //         'id'
-    //     );
+        return result.map((item) => ({
+            createdAt: new Date(item.created_at),
+            startAt: new Date(item.start_at),
+            endAt: new Date(item.end_at),
+            countMeasurements: item.count_measurements,
+            powerSum: item.power_sum,
+            powerAvg: item.power_avg,
+            voltageAvg: item.voltage_avg,
+            currentAvg: item.current_avg,
+            tempCAvg: item.temp_c_avg,
+            tempFAvg: item.temp_f_avg,
+        }));
+    }
 
-    //     if (!result) {
-    //         return false;
-    //     }
+    public async createSummary(plugId: TPlug['id'], summary: TPlugSummary): Promise<boolean> {
+        const now = new Date();
+        now.setMilliseconds(0);
 
-    //     return true;
-    // }
+        const result = await this.database.insert(
+            'summaries',
+            {
+                plug_id: plugId,
+                created_at: now,
+                start_at: summary.startAt,
+                end_at: summary.endAt,
+                count_measurements: summary.countMeasurements,
+                power_sum: summary.powerSum,
+                power_avg: summary.powerAvg,
+                voltage_avg: summary.voltageAvg,
+                current_avg: summary.currentAvg,
+                temp_c_avg: summary.tempCAvg,
+                temp_f_avg: summary.tempFAvg,
+            },
+            'id'
+        );
+
+        return !!result;
+    }
+
+    public async createReport(plugId: TPlug['id'], report: TPlugReport): Promise<boolean> {
+        const now = new Date();
+        now.setMilliseconds(0);
+
+        const result = await this.database.insert(
+            'reports',
+            {
+                plug_id: plugId,
+                created_at: now,
+                report_date: report.reportDate,
+                summaries: JSON.stringify(report.summaries),
+            },
+            'id'
+        );
+
+        return !!result;
+    }
 }
