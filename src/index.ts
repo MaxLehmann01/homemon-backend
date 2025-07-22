@@ -8,6 +8,8 @@ import PlugRepository from 'src/repository/PlugRepository';
 import FetchPlugMeasurementTask from './tasks/FetchPlugMeasurement';
 import CreatePlugSummaryTask from './tasks/CreatePlugSummary';
 import CreatePlugReportTask from './tasks/CreatePlugReports';
+import IndexController from './controllers/IndexController';
+import PlugController from './controllers/PlugController';
 
 Config.loadSchema(ConfigSchema);
 
@@ -21,6 +23,9 @@ const server = Server.getInstance(logger);
 
 const plugRepository = new PlugRepository(database);
 
+const indexController = new IndexController(logger);
+const plugController = new PlugController(logger, plugRepository);
+
 database
     .start()
     .then(async () => {
@@ -30,6 +35,8 @@ database
         logger.error('Failed to connect to the database', { error });
     });
 
+server.useRouter('/', indexController.getRouter());
+server.useRouter('/plug', plugController.getRouter());
 server
     .start()
     .then(() => {
