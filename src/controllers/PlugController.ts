@@ -57,17 +57,39 @@ export default class PlugController extends AbstractController {
 
                 res.status(200).json({
                     message: 'Report for today is not available yet',
-                    data: {
-                        summaries,
-                        measurements,
-                    },
+                    data: [
+                        ...summaries.map((summary) => ({
+                            timestamp: summary.startAt,
+                            power: summary.powerAvg,
+                            current: summary.currentAvg,
+                            voltage: summary.voltageAvg,
+                            tempC: summary.tempCAvg,
+                            tempF: summary.tempFAvg,
+                        })),
+                        ...measurements.map((measurement) => ({
+                            timestamp: measurement.createdAt,
+                            power: measurement.power,
+                            current: measurement.current,
+                            voltage: measurement.voltage,
+                            tempC: measurement.tempC,
+                            tempF: measurement.tempF,
+                        })),
+                    ],
                 });
             } else {
                 const report = await this.plugRepository.getPlugReport(plugId, new Date(reportDate));
 
                 res.status(200).json({
                     message: 'Report retrieved successfully',
-                    data: report,
+                    data:
+                        report?.summaries.map((summary) => ({
+                            timestamp: summary.startAt,
+                            power: summary.powerAvg,
+                            current: summary.currentAvg,
+                            voltage: summary.voltageAvg,
+                            tempC: summary.tempCAvg,
+                            tempF: summary.tempFAvg,
+                        })) || [],
                 });
             }
         } catch (err) {
