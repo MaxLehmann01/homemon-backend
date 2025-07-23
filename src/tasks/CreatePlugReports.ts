@@ -37,50 +37,5 @@ export default class CreatePlugReportTask extends AbstractTask implements TaskIn
                 this.logger.warn(`Failed to insert report for plug ${plug.getName()}`, { plugId: plug.getId() });
             }
         }
-
-        // const now = new Date();
-        // const oneMinutesAgo = new Date(now.getTime() - 1 * 60 * 1000);
-
-        // now.setMilliseconds(0);
-        // now.setSeconds(0);
-        // oneMinutesAgo.setMilliseconds(0);
-        // oneMinutesAgo.setSeconds(0);
-
-        // console.log({
-        //     now: now,
-        //     oneMinutesAgo: oneMinutesAgo,
-        // });
-
-        // for (const plug of plugs) {
-        //     const measurements = await this.plugRepository.getMeasurementsByPlugId(plug.getId(), oneMinutesAgo, now);
-        //     const summary = this.summarizeMeasurements(measurements);
-
-        //     if (!summary) {
-        //         this.logger.warn('Failed to create summary for plug', {
-        //             plugId: plug.getId(),
-        //             plugName: plug.getName(),
-        //         });
-        //         continue;
-        //     }
-
-        //     if (await this.plugRepository.createSummary(plug.getId(), summary)) {
-        //         this.logger.info(`Inserted summary for plug ${plug.getName()}`, summary);
-
-        //         if (await this.plugRepository.deleteMeasurementsByPlugId(plug.getId(), oneMinutesAgo, now)) {
-        //             this.logger.info(`Deleted measurements for plug ${plug.getName()} after summary creation`, {
-        //                 plugId: plug.getId(),
-        //             });
-        //         } else {
-        //             this.logger.warn(
-        //                 `Failed to delete measurements for plug ${plug.getName()} after summary creation`,
-        //                 {
-        //                     plugId: plug.getId(),
-        //                 }
-        //             );
-        //         }
-        //     } else {
-        //         this.logger.warn(`Failed to insert summary for plug ${plug.getName()}`, { plugId: plug.getId() });
-        //     }
-        // }
     }
 }

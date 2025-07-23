@@ -16,9 +16,19 @@ export default class FetchPlugMeasurementTask extends AbstractTask implements Ta
 
         for (const plug of plugs) {
             const measurement = await this.plugRepository.fetchMeasurement(plug);
+
             if (!measurement) {
                 continue;
             }
+
+            await this.plugRepository.update({
+                id: plug.getId(),
+                name: plug.getName(),
+                url: plug.getUrl(),
+                isProtected: plug.getIsProtected(),
+                isOn: measurement.isOn,
+                autoShutdownThreshold: plug.getAutoShutdownThreshold(),
+            });
 
             await this.plugRepository.createMeasurement(plug.getId(), measurement);
 

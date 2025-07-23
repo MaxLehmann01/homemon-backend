@@ -11,16 +11,63 @@ export default class PlugRepository {
     }
 
     public async findAll(): Promise<Plug[]> {
-        const result = await this.database.select<TPlug>('plugs', ['id', 'name', 'url']);
+        const result = await this.database.select(
+            'plugs',
+            ['id', 'name', 'url', 'protected', 'is_on', 'auto_shutdown_threshold'],
+            undefined,
+            'name ASC'
+        );
 
         if (!result) {
             return [];
         }
 
-        return result.map((item) => new Plug(item.id, item.name, item.url));
+        return result.map(
+            (item) => new Plug(item.id, item.name, item.url, item.protected, item.is_on, item.auto_shutdown_threshold)
+        );
     }
 
-    public async fetchMeasurement(plug: Plug): Promise<TPlugMeasurement | null> {
+    public async update(plug: TPlug): Promise<Plug | null> {
+        const result = await this.database.update(
+            'plugs',
+            {
+                name: plug.name,
+                url: plug.url,
+                protected: plug.isProtected,
+                is_on: plug.isOn,
+                auto_shutdown_threshold: plug.autoShutdownThreshold,
+            },
+            'id = $1',
+            [plug.id]
+        );
+
+        if (!result) {
+            return null;
+        }
+
+        return new Plug(plug.id, plug.name, plug.url, plug.isProtected, plug.isOn, plug.autoShutdownThreshold);
+    }
+
+    public async toggle(plug: Plug): Promise<boolean | null> {
+        try {
+            const requestConfig: AxiosRequestConfig = {
+                method: 'GET',
+                url: `${plug.getUrl()}/rpc/Switch.Toggle?id=0`,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+
+            const response = await axios(requestConfig);
+            const data = response.data as { was_on: boolean };
+
+            return !data.was_on;
+        } catch (_) {
+            return null;
+        }
+    }
+
+    public async fetchMeasurement(plug: Plug): Promise<(TPlugMeasurement & { isOn: boolean }) | null> {
         try {
             const requestConfig: AxiosRequestConfig = {
                 method: 'GET',
@@ -43,6 +90,7 @@ export default class PlugRepository {
             };
 
             return {
+                isOn: data.output,
                 power: data.apower,
                 voltage: data.voltage,
                 current: data.current,
@@ -188,5 +236,28 @@ export default class PlugRepository {
         );
 
         return !!result;
+    }
+
+    public async getPlugReport(
+        plugId: TPlug['id'],
+        reportDate: TPlugReport['reportDate']
+    ): Promise<TPlugReport | null> {
+        const result = await this.database.select(
+            'reports',
+            ['id', 'created_at', 'report_date', 'summaries'],
+            'plug_id = $1 AND report_date = $2',
+            'id ASC',
+            [plugId, reportDate]
+        );
+
+        if (!result || result.length === 0) {
+            return null;
+        }
+
+        return {
+            createdAt: new Date(result[0].created_at),
+            reportDate: new Date(result[0].report_date),
+            summaries: result[0].summaries,
+        };
     }
 }

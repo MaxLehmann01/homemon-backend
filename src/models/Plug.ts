@@ -2,6 +2,9 @@ export type TPlug = {
     id: number;
     name: string;
     url: string;
+    isProtected: boolean;
+    isOn: boolean;
+    autoShutdownThreshold: number | null;
 };
 
 export type TPlugMeasurement = {

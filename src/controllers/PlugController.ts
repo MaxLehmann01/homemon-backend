@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { LoggerInterface } from 'src/components/logger/LoggerInterface';
+import RouteError from 'src/components/server/RouteError';
 import AbstractController from 'src/controllers/AbstractController';
 import PlugRepository from 'src/repository/PlugRepository';
 
@@ -13,6 +14,7 @@ export default class PlugController extends AbstractController {
 
     protected useRoutes(): void {
         this.router.get('/', this.getPlugsRoute.bind(this));
+        this.router.get('/:id/report/:report', this.getPlugReport.bind(this));
     }
 
     private async getPlugsRoute(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -28,6 +30,41 @@ export default class PlugController extends AbstractController {
                 })),
             });
         } catch (err) {
+            next(err);
+        }
+    }
+
+    private async getPlugReport(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const plugId = Number(req.params.id);
+
+            if (!plugId || isNaN(Number(plugId))) {
+                throw new RouteError(400, 'Invalid plug ID');
+            }
+
+            const reportDate = req.params.report;
+
+            if (!reportDate || (reportDate !== 'today' && new Date(reportDate).toString() === 'Invalid Date')) {
+                throw new RouteError(400, 'Invalid report date');
+            }
+
+            if (reportDate === 'today') {
+                res.status(200).json({
+                    message: 'Report for today is not available yet',
+                    data: null,
+                });
+            } else {
+                const report = await this.plugRepository.getPlugReport(plugId, new Date(reportDate));
+                console.log(report);
+
+                res.status(200).json({
+                    message: 'Report retrieved successfully',
+                    data: report,
+                });
+            }
+        } catch (err) {
+            console.log(err);
+
             next(err);
         }
     }

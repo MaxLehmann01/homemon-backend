@@ -10,6 +10,7 @@ import CreatePlugSummaryTask from './tasks/CreatePlugSummary';
 import CreatePlugReportTask from './tasks/CreatePlugReports';
 import IndexController from './controllers/IndexController';
 import PlugController from './controllers/PlugController';
+import AutoShutdownPlugTask from './tasks/AutoShutdownPlug';
 
 Config.loadSchema(ConfigSchema);
 
@@ -52,6 +53,7 @@ scheduler.addTask('fetch-plug-measurement', '* * * * * *', () =>
 );
 scheduler.addTask('create-plug-summary', '0 * * * * *', () => new CreatePlugSummaryTask(logger, plugRepository).run());
 scheduler.addTask('create-plug-report', '0 0 * * * *', () => new CreatePlugReportTask(logger, plugRepository).run());
+scheduler.addTask('auto-shutdown-plug', '*/15 * * * *', () => new AutoShutdownPlugTask(logger, plugRepository).run());
 
 (async () => {
     // new CreatePlugReportTask(logger, plugRepository).run();

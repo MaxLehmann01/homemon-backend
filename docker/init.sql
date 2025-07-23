@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS public.plugs (
     name VARCHAR(100) NOT NULL,
     url VARCHAR(255) NOT NULL,
     protected BOOLEAN NOT NULL DEFAULT FALSE,
-    is_on BOOLEAN NOT NULL DEFAULT FALSE
+    is_on BOOLEAN NOT NULL DEFAULT FALSE,
+    auto_shutdown_threshold NUMERIC
 );
 
 CREATE TABLE IF NOT EXISTS public.measurements (
