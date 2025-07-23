@@ -27,6 +27,44 @@ export default class PlugRepository {
         );
     }
 
+    public async create(plug: Omit<TPlug, 'id'>): Promise<Plug | null> {
+        const createdPlugId = (await this.database.insert(
+            'plugs',
+            {
+                name: plug.name,
+                url: plug.url,
+                protected: plug.isProtected,
+                is_on: plug.isOn,
+                auto_shutdown_threshold: plug.autoShutdownThreshold,
+            },
+            'id'
+        )) as number | null;
+
+        if (!createdPlugId) {
+            return null;
+        }
+
+        const createdPlug = await this.database.selectOne(
+            'plugs',
+            ['id', 'name', 'url', 'protected', 'is_on', 'auto_shutdown_threshold'],
+            'id = $1',
+            [createdPlugId]
+        );
+
+        if (!createdPlug) {
+            return null;
+        }
+
+        return new Plug(
+            createdPlugId,
+            createdPlug.name,
+            createdPlug.url,
+            createdPlug.protected,
+            createdPlug.is_on,
+            createdPlug.auto_shutdown_threshold
+        );
+    }
+
     public async update(plug: TPlug): Promise<Plug | null> {
         const result = await this.database.update(
             'plugs',

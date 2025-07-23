@@ -13,29 +13,30 @@ export default class CreatePlugReportTask extends AbstractTask implements TaskIn
     }
 
     public async run(): Promise<void> {
-        const plugs = await this.plugRepository.findAll();
-        const now = new Date();
-        const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        try {
+            const plugs = await this.plugRepository.findAll();
+            const today = new Date();
+            const oneDayAgo = new Date(today.getTime() - 24 * 60 * 60 * 1000);
 
-        now.setMilliseconds(0);
-        now.setSeconds(0);
+            today.setHours(0, 0, 0, 0);
+            oneDayAgo.setHours(0, 0, 0, 0);
 
-        oneDayAgo.setMilliseconds(0);
-        oneDayAgo.setSeconds(0);
+            for (const plug of plugs) {
+                const summaries = await this.plugRepository.getSummariesByPlugId(plug.getId(), oneDayAgo, today);
+                const report = {
+                    createdAt: today,
+                    reportDate: oneDayAgo,
+                    summaries: summaries,
+                } as TPlugReport;
 
-        for (const plug of plugs) {
-            const summaries = await this.plugRepository.getSummariesByPlugId(plug.getId(), oneDayAgo, now);
-            const report = {
-                createdAt: now,
-                reportDate: oneDayAgo,
-                summaries: summaries,
-            } as TPlugReport;
-
-            if (await this.plugRepository.createReport(plug.getId(), report)) {
-                this.logger.info(`Inserted report for plug ${plug.getName()}`, report);
-            } else {
-                this.logger.warn(`Failed to insert report for plug ${plug.getName()}`, { plugId: plug.getId() });
+                if (await this.plugRepository.createReport(plug.getId(), report)) {
+                    this.logger.info(`Inserted report for plug ${plug.getName()}`, report);
+                } else {
+                    this.logger.warn(`Failed to insert report for plug ${plug.getName()}`, { plugId: plug.getId() });
+                }
             }
+        } catch (err) {
+            this.logger.error('Failed to create plug reports', { error: err });
         }
     }
 }

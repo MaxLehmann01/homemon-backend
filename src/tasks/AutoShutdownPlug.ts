@@ -17,8 +17,10 @@ export default class AutoShutdownPlugTask extends AbstractTask implements TaskIn
         for (const plug of plugs) {
             const autoShutdownThreshold = plug.getAutoShutdownThreshold();
 
-            if (autoShutdownThreshold === null || !plug.getIsOn()) {
-                this.logger.debug(`Skipping auto shutdown for plug ${plug.getName()} as it is either null or off.`);
+            if (autoShutdownThreshold === null || !plug.getIsOn() || !plug.getIsProtected()) {
+                this.logger.debug(
+                    `Skipping auto shutdown for plug ${plug.getName()} as it is either null, off or protected.`
+                );
                 continue;
             }
 

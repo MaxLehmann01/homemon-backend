@@ -1,10 +1,8 @@
-import { start } from 'repl';
 import { LoggerInterface } from 'src/components/logger/LoggerInterface';
 import { TPlugMeasurement, TPlugSummary } from 'src/models/Plug';
 import PlugRepository from 'src/repository/PlugRepository';
 import AbstractTask from 'src/tasks/AbstractTask';
 import { TaskInterface } from 'src/tasks/TaskInterface';
-import { log } from 'winston';
 
 export default class CreatePlugSummaryTask extends AbstractTask implements TaskInterface {
     private plugRepository: PlugRepository;
@@ -17,20 +15,15 @@ export default class CreatePlugSummaryTask extends AbstractTask implements TaskI
     public async run(): Promise<void> {
         const plugs = await this.plugRepository.findAll();
         const now = new Date();
-        const oneMinutesAgo = new Date(now.getTime() - 1 * 60 * 1000);
+        const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
 
         now.setMilliseconds(0);
         now.setSeconds(0);
-        oneMinutesAgo.setMilliseconds(0);
-        oneMinutesAgo.setSeconds(0);
-
-        console.log({
-            now: now,
-            oneMinutesAgo: oneMinutesAgo,
-        });
+        fiveMinutesAgo.setMilliseconds(0);
+        fiveMinutesAgo.setSeconds(0);
 
         for (const plug of plugs) {
-            const measurements = await this.plugRepository.getMeasurementsByPlugId(plug.getId(), oneMinutesAgo, now);
+            const measurements = await this.plugRepository.getMeasurementsByPlugId(plug.getId(), fiveMinutesAgo, now);
             const summary = this.summarizeMeasurements(measurements);
 
             if (!summary) {
@@ -44,7 +37,7 @@ export default class CreatePlugSummaryTask extends AbstractTask implements TaskI
             if (await this.plugRepository.createSummary(plug.getId(), summary)) {
                 this.logger.info(`Inserted summary for plug ${plug.getName()}`, summary);
 
-                if (await this.plugRepository.deleteMeasurementsByPlugId(plug.getId(), oneMinutesAgo, now)) {
+                if (await this.plugRepository.deleteMeasurementsByPlugId(plug.getId(), fiveMinutesAgo, now)) {
                     this.logger.info(`Deleted measurements for plug ${plug.getName()} after summary creation`, {
                         plugId: plug.getId(),
                     });
@@ -75,13 +68,6 @@ export default class CreatePlugSummaryTask extends AbstractTask implements TaskI
         const voltageAvg = count > 0 ? measurements.reduce((sum, m) => sum + Number(m.voltage), 0) / count : 0;
         const tempCAvg = count > 0 ? measurements.reduce((sum, m) => sum + Number(m.tempC), 0) / count : 0;
         const tempFAvg = count > 0 ? measurements.reduce((sum, m) => sum + Number(m.tempF), 0) / count : 0;
-
-        console.log({
-            startAt: measurements[0].createdAt,
-            endAt: measurements[measurements.length - 1].createdAt,
-            startAtWithoutMs: new Date(measurements[0].createdAt).setMilliseconds(0),
-            endAtWithoutMs: new Date(measurements[measurements.length - 1].createdAt).setMilliseconds(0),
-        });
 
         const startAt = new Date(measurements[0].createdAt);
         startAt.setMilliseconds(0);

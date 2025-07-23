@@ -51,7 +51,9 @@ const scheduler = Scheduler.getInstance(logger);
 scheduler.addTask('fetch-plug-measurement', '* * * * * *', () =>
     new FetchPlugMeasurementTask(logger, plugRepository).run()
 );
-scheduler.addTask('create-plug-summary', '0 * * * * *', () => new CreatePlugSummaryTask(logger, plugRepository).run());
+scheduler.addTask('create-plug-summary', '0 */5 * * * *', () =>
+    new CreatePlugSummaryTask(logger, plugRepository).run()
+);
 scheduler.addTask('create-plug-report', '0 0 * * * *', () => new CreatePlugReportTask(logger, plugRepository).run());
 scheduler.addTask('auto-shutdown-plug', '*/15 * * * *', () => new AutoShutdownPlugTask(logger, plugRepository).run());
 
